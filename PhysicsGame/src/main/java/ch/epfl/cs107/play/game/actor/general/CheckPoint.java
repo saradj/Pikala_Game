@@ -13,7 +13,7 @@ public class CheckPoint extends Triggers {
 	public CheckPoint(ActorGame game, boolean fixed, Vector position, Shape shape) {
 		super(game, fixed, position,shape);
 		
-		 graphics = new ImageGraphics("torch.png",1f,1f, new Vector(0.5f,0.5f));
+		 graphics = new ImageGraphics("lever.blue.left.png",1f,1f, new Vector(0.5f,0.5f));
 		  graphics.setParent(getEntity());
 		  
 		// TODO Auto-generated constructor stub
@@ -21,6 +21,7 @@ public class CheckPoint extends Triggers {
 
 	@Override
 	public void draw(Canvas canvas) {
+		if(canvas==null)throw new NullPointerException("Argument type Canvas null fo draw method in CheckPoint");
 		
 		graphics.draw(canvas);
 
@@ -29,14 +30,14 @@ public class CheckPoint extends Triggers {
 	{
 		super.update(deltaTime);
 		if(haveColided())
-			if(graphics.getName().equals("torch.png"))
+			if(graphics.getName().equals("lever.blue.left.png"))
 				{
+				
 				checked++;
 					
-				graphics.setName("torch.lit.2.png");
+				graphics.setName("lever.blue.right.png");
 				
 				}
-		System.out.println("checked "+checked);
 		
 	}
 }

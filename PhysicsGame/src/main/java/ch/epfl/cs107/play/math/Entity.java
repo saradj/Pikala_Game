@@ -125,7 +125,7 @@ public class Entity implements Positionable {
     /** @return the angular position (i.e. rotation) of the entity, in radians */
     public float getAngularPosition() {
         return body.getAngle();
-    }
+    } 
     
     /**
      * Sets the angular velocity.
@@ -135,8 +135,23 @@ public class Entity implements Positionable {
         body.setAngularVelocity(velocity);
     }
     
+    //restore's the gravity for the body, the body fells the normal gravity
+   public void restoreGravity() {
+    	body.setGravityScale(1);
+    }
+   
+   //cancel's the gravity for a body, the gravity doesn't affect it anymore
+     public void cancelGravity(){
+    	 body.setGravityScale(0);
+     }
+    
+     //get the mass of a body
+    public float getMass() {
+    	return body.m_mass;
+    }
     /** @return the angular velocity, in radians per second */
     public float getAngularVelocity() {
+    	
         return body.m_angularVelocity;
     }
     

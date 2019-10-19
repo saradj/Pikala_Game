@@ -2,12 +2,12 @@ package ch.epfl.cs107.play.game.actor.general;
 
 import ch.epfl.cs107.play.game.actor.ActorGame;
 import ch.epfl.cs107.play.game.actor.ImageGraphics;
-import ch.epfl.cs107.play.game.actor.bikegame.GameLevel;
+import ch.epfl.cs107.play.game.actor.bikegame.PikalaGame;
 import ch.epfl.cs107.play.math.PartBuilder;
 import ch.epfl.cs107.play.math.Shape;
 import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Canvas;
-import sun.awt.image.ImageAccessException;
+
 
 public class Pickup extends Triggers {
 	
@@ -16,34 +16,36 @@ public class Pickup extends Triggers {
 	{
 		return graphics;
 	}
-
-	public static void setScore(int score)
+	//the game calls this method to reset the score after restarting
+	static public void resetScore()
 	{
-		Pickup.score=score;
+		score=0;
 	}
-	 public static int score=0;
+	//a static counter for the score that counts every pick up collected
+	 private static int score=0;
 	
 	public Pickup(ActorGame game, boolean fixed, Vector position, Shape shape) {
 		super(game, fixed, position,shape);
 		graphics=new ImageGraphics("star.gold.png",1f,1f, new Vector(0.5f,0.5f));
-		  graphics.setParent(getEntity());
- //timer=0.1f;
-		// TODO Auto-generated constructor stub
+		graphics.setParent(getEntity());
+ 
 	}
 	@Override
 	public void draw(Canvas canvas) {
+		if(canvas==null)throw new NullPointerException("Argument type Canvas null fo draw method in PickUp");
 		
 		graphics.draw(canvas);
 
 	}
 	public  void update(float deltaTime)
 	{
-		super.update(deltaTime);
-		if(haveColided())
-			{
+		super.update(deltaTime); 
+		if(haveColided()) {
+			//if the inherited method from Triggers says that the biker picked it up, the score increases by 1 
 			++score;
-			((GameLevel)getOwner()).Score(score);
-			game.removeActor(this);
+			//notifying the game about the score change
+			((PikalaGame)getOwner()).Score(score);
+			getOwner().removeActor(this);
 			
 			}
 		

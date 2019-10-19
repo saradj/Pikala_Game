@@ -47,8 +47,7 @@ public class HelloWorldGame implements Game {
         graphics2.setDepth(0.5f) ;
         graphics2.setParent(body);
         graphics.setParent(body);
-       // TO BE COMPLETED
-        // Successfully initiated
+  
         return true;
     }
 
@@ -60,9 +59,8 @@ public class HelloWorldGame implements Game {
     	graphics.draw(window);
     	graphics2.draw(window);
     	window.setRelativeTransform(Transform.I.scaled(10.0f));
-
-        // The actual rendering will be done now, by the program loop
     }
+       
 
     // This event is raised after game ends, to release additional resources
     @Override

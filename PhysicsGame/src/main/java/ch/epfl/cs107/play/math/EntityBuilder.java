@@ -11,11 +11,17 @@ public class EntityBuilder {
     private World world;
     private BodyDef bodyDef;
     
+    //sets a body Kinematic
+    public void setKinematic()
+    {
+    	 bodyDef.type=BodyType.KINEMATIC;
+    }
     // For internal use only
     EntityBuilder(World world) {
         this.world = world;
         bodyDef = new BodyDef();
         bodyDef.type = BodyType.DYNAMIC;
+      
     }
     
     /**
@@ -24,7 +30,7 @@ public class EntityBuilder {
      */
     public void setFixed(boolean fixed) {
         bodyDef.type = fixed ? BodyType.STATIC : BodyType.DYNAMIC;
-    }
+    } 
     
     /** @return whether this entity is immovable and unrotatable */
     public boolean isFixed() {

@@ -35,8 +35,7 @@ public class SimpleCrateGame implements Game {
 	        entityBuilder.setPosition(new Vector(1.0f, 0.5f));
 	        block = entityBuilder.build();
 	        PartBuilder partBuilder = block.createPartBuilder() ;
-	     // Create a square polygon , and set the shape of the builder to
-	    // this polygon
+	     
 	     Polygon polygon = new Polygon(
 	     new Vector(0.0f, 0.0f),
 	     new Vector(1.0f, 0.0f),
@@ -56,24 +55,19 @@ public class SimpleCrateGame implements Game {
 	        entityBuilder2.setFixed(false);
 	        entityBuilder2.setPosition(new Vector(0.2f, 4.0f));
 	        crate = entityBuilder2.build();
-	        PartBuilder partBuilder2 = crate.createPartBuilder() ;
-	     // Create a square polygon , and set the shape of the builder to
-	     //this polygon
-	
+	       
+	     PartBuilder partBuilder2 = crate.createPartBuilder() ;
 	     partBuilder2.setShape(polygon) ;
-	     // Finally , do not forget the following line.
 	     partBuilder2.build() ;
 
 	        graphics2 = new ImageGraphics("box.4.png", 1, 1);
 	        graphics2.setAlpha(1.0f) ;
 	        graphics2.setDepth(0.0f) ;
 	        graphics2.setParent(crate);
-	       // TO BE COMPLETED
-	        // Successfully initiated
+	      
 	        return true;
 	    }
 
-	    // This event is called at each frame
 	    @Override
 	    public void update(float deltaTime) {
 	        
@@ -82,10 +76,8 @@ public class SimpleCrateGame implements Game {
 	    	graphics2.draw(window);
 	    	window.setRelativeTransform(Transform.I.scaled(10.0f));
 
-	        // The actual rendering will be done now, by the program loop
 	    }
 
-	    // This event is raised after game ends, to release additional resources
 	    @Override
 	    public void end() {
 	        // Empty on purpose, no cleanup required yet

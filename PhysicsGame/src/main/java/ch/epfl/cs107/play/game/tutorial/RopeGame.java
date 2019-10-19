@@ -36,43 +36,40 @@ public class RopeGame implements Game{
         world = new World();
         world.setGravity(new Vector(0.0f, -9.81f));
      
-     // Create a square polygon , and set the shape of the builder to
-    // this polygon
+     
         Circle circle = new Circle(ballRadius) ;
   
-        EntityBuilder entityBuilder2 = world.createEntityBuilder();
-        entityBuilder2.setFixed(false);
-        entityBuilder2.setPosition(new Vector(0.6f, 4.0f));
-        ball = entityBuilder2.build();
-        PartBuilder partBuilder2 = ball.createPartBuilder() ;
-     // Create a square polygon , and set the shape of the builder to
-     //this polygon
+        EntityBuilder ballEntityBuilder = world.createEntityBuilder();
+        ballEntityBuilder.setFixed(false);
+        ballEntityBuilder.setPosition(new Vector(0.6f, 4.0f));
+        ball = ballEntityBuilder.build();
+        PartBuilder ballPartBuilder = ball.createPartBuilder() ;
+    
 
-     partBuilder2.setShape(circle) ;
+     ballPartBuilder.setShape(circle) ;
      // Finally , do not forget the following line.
-     partBuilder2.build() ;
+     ballPartBuilder.build() ;
      ballGraphics = new ShapeGraphics(circle , Color.BLUE, Color.RED,
     		 .1f, 1.f, 0) ;
 
        ballGraphics.setParent(ball);
        
-       EntityBuilder entityBuilder = world.createEntityBuilder();
-       entityBuilder.setFixed(true);
-       entityBuilder.setPosition(new Vector(1f, 1f));
-       Entity block = entityBuilder.build();
-       PartBuilder partBuilder = block.createPartBuilder() ;
-    // Create a square polygon , and set the shape of the builder to
-   // this polygon
+       EntityBuilder blockEntityBuilder = world.createEntityBuilder();
+       blockEntityBuilder.setFixed(true);
+       blockEntityBuilder.setPosition(new Vector(1f, 1f));
+       Entity block = blockEntityBuilder.build();
+       PartBuilder blockPartBuilder = block.createPartBuilder() ;
+    
     Polygon polygon = new Polygon(
     new Vector(0.0f, 0.0f),
     new Vector(2.0f, 0.0f),
     new Vector(2.0f, 2.0f),
     new Vector(0.0f, 2.0f)
     ) ;
-    partBuilder.setShape(polygon) ;
+    blockPartBuilder.setShape(polygon) ;
     // Finally , do not forget the following line.
-    partBuilder.setFriction(0.5f) ;
-    partBuilder.build() ;
+    blockPartBuilder.setFriction(0.5f) ;
+    blockPartBuilder.build() ;
 
        graphics = new ImageGraphics("stone.broken.4.png", 2, 2);
        graphics.setAlpha(1.0f) ;

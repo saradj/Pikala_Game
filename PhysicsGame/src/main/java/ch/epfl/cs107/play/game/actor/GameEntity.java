@@ -22,10 +22,9 @@ import ch.epfl.cs107.play.math.World;
  *
  */
 public abstract class GameEntity {
-	 protected Entity entity;
-	// protected PartBuilder partBuilder ;
-	 protected ActorGame game;
-	 protected EntityBuilder entityBuilder;
+	 private Entity entity;
+	 private ActorGame game;
+	 private EntityBuilder entityBuilder;
 	 
 	 
 	 public Entity getEntity()
@@ -35,26 +34,21 @@ public abstract class GameEntity {
 	protected ActorGame getOwner() {
 		return game;
 	}
-	public GameEntity(ActorGame fatima, boolean fixed, Vector position)
+	public GameEntity(ActorGame fatima, boolean fixed, Vector position) 
 	{
+		if(fatima==null)throw new NullPointerException("Argument of type ActorGame null in GameEntity");
+		if(position==null)throw new NullPointerException("Given position null in GameEntity");
+		//creating the Entities
 		this.game=fatima;
 		entityBuilder=game.EntityCreator();
 		entityBuilder.setFixed(fixed);
         entityBuilder.setPosition(position);
         entity=entityBuilder.build();
-        
-       //  partBuilder = entity.createPartBuilder() ;
-		
-	//	game.addActor((Actor)this);
-		
+
+		 
 	}
-	/*public GameEntity(ActorGame game, boolean fixed, Vector position, Shape shape) {
-		this(game,fixed,position);
-		partBuilder=entity.createPartBuilder();
-		 partBuilder.setShape(shape) ;
-		 partBuilder.build() ;
-		 }
-		*/
+
+
 	public GameEntity(ActorGame game, boolean fixed) 
 	{
 		this(game,fixed,Vector.ZERO);

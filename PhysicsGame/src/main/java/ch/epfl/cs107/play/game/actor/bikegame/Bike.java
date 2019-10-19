@@ -1,237 +1,6 @@
 
 package ch.epfl.cs107.play.game.actor.bikegame;
-/*
-import java.awt.Color;
-import java.awt.event.KeyEvent;
 
-import ch.epfl.cs107.play.game.actor.Actor;
-import ch.epfl.cs107.play.game.actor.ActorGame;
-import ch.epfl.cs107.play.game.actor.GameEntity;
-import ch.epfl.cs107.play.game.actor.ImageGraphics;
-import ch.epfl.cs107.play.game.actor.ShapeGraphics;
-import ch.epfl.cs107.play.game.actor.general.Wheel;
-import ch.epfl.cs107.play.math.Circle;
-import ch.epfl.cs107.play.math.Contact;
-import ch.epfl.cs107.play.math.ContactListener;
-import ch.epfl.cs107.play.math.Entity;
-import ch.epfl.cs107.play.math.EntityBuilder;
-import ch.epfl.cs107.play.math.PartBuilder;
-import ch.epfl.cs107.play.math.Polygon;
-import ch.epfl.cs107.play.math.Polyline;
-import ch.epfl.cs107.play.math.Shape;
-import ch.epfl.cs107.play.math.Transform;
-import ch.epfl.cs107.play.math.Vector;
-import ch.epfl.cs107.play.window.Canvas;
-public class Bike extends GameEntity implements Actor {
-
-	private boolean hit;
-	Vector handLocation;
-	
-	protected boolean getHit()
-	{
-		return hit;
-	}
-	protected void setHit(boolean hit)
-	{
-		this.hit=hit;
-	}
-	EntityBuilder entityBuilder;
-	PartBuilder partBuilder;
-	Wheel wheelR, wheelL;
-	static Polygon polygon=new Polygon(
-	    		0.0f, 0.5f,
-	    		0.5f, 1.0f,
-	    		0.0f, 2.0f,
-	    		-0.5f, 1.0f);
-	
-	private final float MAX_WHEEL_SPEED = 20.0f;
-	private boolean lookRight=false;
- boolean handUp=false;
-	public Bike(ActorGame game, boolean fixed, Vector position,Shape shape) {
-		super(game,fixed,position);
-		partBuilder=getEntity().createPartBuilder();
-		partBuilder.setShape(shape);
-		partBuilder.setGhost(true);
-	partBuilder.build();
-		ContactListener listener = new ContactListener () {
-			@Override
-			public void beginContact(Contact contact) {
-			if (contact.getOther().isGhost ())
-			return ;
-			if(contact.getOther().getCollisionSignature()==0x1)
-			// si contact avec les roues :
-			return ;
-			else
-			{
-				hit = true ;
-				((GameLevel)getOwner()).setHasFallen(true);
-			}
-			}
-			@Override
-			public void endContact(Contact contact) {}
-			} ;
-			getEntity().addContactListener(listener);
-			
-		
-		 wheelR = new Wheel(game, false, getEntity().getPosition().add(-1.0f,0.0f), 0.5f);
-		 wheelL = new Wheel(game, false, getEntity().getPosition().add(1.0f,0.0f), 0.5f);
-		 wheelR.attach(getEntity(), new Vector (-1.0f, 0.0f), new
-				 Vector (-0.5f, -1.0f));
-		 wheelL.attach(getEntity() ,new Vector (1.0f, 0.0f), new
-					Vector (0.5f, -1.0f));
-	
-	}
-
-	@Override
-	public Transform getTransform() {
-		// TODO Auto-generated method stub
-		return getEntity().getTransform();
-	}
-
-	@Override
-	public Vector getVelocity() {
-		// TODO Auto-generated method stub
-		return getEntity().getVelocity();
-	}
-
-	@Override
-	public void draw(Canvas canvas) {
-		Circle head = new Circle (0.2f, getHeadLocation ()) ;
-		
-		Polyline arm = new Polyline(
-				getShoulderLocation (),
-				getHandLocation()) ;
-		canvas.drawShape(arm , this.getTransform (), Color.YELLOW , Color.GREEN ,
-				0.1f, 1f, 1.f) ;
-		canvas.drawShape(head , this.getTransform (), Color.YELLOW , Color.black ,0.1f, 1f, 1.f);
-		canvas.drawShape(polygon , this.getTransform (), Color.YELLOW , Color.black ,
-	    0.1f, 0.5f, 0.5f);
-		
-	}
-	@Override
-	public void destroy() {
-		super.destroy();
-	    getEntity().destroy();
-	    
-	    wheelL.destroy();
-	    wheelR.destroy();
-	    
-	 }
-	//just destroy the hitbox, the entity
-	public void destroyTheBike()
-	{
-		super.destroy();
-	}
-	
-		
-		// TODO Auto-generated method stub
-		private Vector getHeadLocation () {
-			return new Vector (0.0f,1.75f) ;
-		}
-		private Vector getShoulderLocation()
-		{
-			return new Vector(0.0f, 1.55f);
-			
-		}
-		public void setHandLocation(Vector handLocation)
-		{
-				
-			this.handLocation=handLocation;
-		}
-		public Vector getHandLocation()
-		
-		{	if(!handUp) {
-			if(lookRight)
-			
-		return new Vector(1.5f,1.3f);
-				
-			
-					else
-			return new Vector(-1.5f, 1.3f);
-			}
-			else
-			{
-				if(lookRight)
-				return new Vector(1.5f,2.3f);
-				else
-					return new Vector(-1.5f,2.3f);
-			}
-				
-		}
-			
-		
-	
-		public void setPosition(Vector position)
-		{
-			getEntity().setPosition(position);
-		}
-	
-
-	public  void update(float deltaTime) { 
-		wheelL.relax();
-		wheelR.relax();
-		if(hit)
-			{
-			
-			destroyTheBike();
-			
-			}
-		if (getOwner().getKeyboard().get(KeyEvent.VK_SPACE).isPressed()) { 
-			if(lookRight)
-			{
-				lookRight=false;
-				
-			}
-			else
-				lookRight=true;
-		}
-		
-		//wheelL.power(0);
-		//wheelR.power(0);
-
-		if(getOwner().getKeyboard().get(KeyEvent.VK_DOWN).isDown())
-		{
-			wheelL.power(0);
-			
-			wheelR.power(0);
-		}
-		if(getOwner().getKeyboard().get(KeyEvent.VK_UP).isDown())
-		{
-			if(lookRight)
-			{
-				if(wheelL.getSpeed()>-MAX_WHEEL_SPEED)
-				{
-				wheelL.power(-MAX_WHEEL_SPEED);
-				}
-			}
-			else
-				if(wheelR.getSpeed()<MAX_WHEEL_SPEED)
-					
-				{
-				wheelR.power(MAX_WHEEL_SPEED);
-				}
-			
-	
-		}
-		if(getOwner().getKeyboard().get(KeyEvent.VK_LEFT).isDown())
-		{
-			getEntity().applyAngularForce (10.0f) ;
-		}
-		if(getOwner().getKeyboard().get(KeyEvent.VK_RIGHT).isDown())
-		{
-			getEntity().applyAngularForce (-10.0f) ;
-		}
-		if(handUp)
-		{
-			wheelL.power(0);
-			
-			wheelR.power(0);
-		}
-		
-		// By default, actors have nothing to update 
-	} 
-}
-*/
 
 
 import java.awt.Color;
@@ -255,79 +24,206 @@ import ch.epfl.cs107.play.math.Shape;
 import ch.epfl.cs107.play.math.Transform;
 import ch.epfl.cs107.play.math.Vector;
 import ch.epfl.cs107.play.window.Canvas;
+
 public class Bike extends GameEntity implements Actor {
-    int i =0;
-	private boolean hit;
-	Vector handLocation;
-	Vector feetDLocation= new Vector(-0.3f,-0.15f);
-	Vector feetGLocation = new Vector(0.3f,-0.15f);
-	final static Vector feetG=new Vector(0.3f,-0.15f);
-	final static Vector feetD=new Vector(-0.3f,-0.15f);
 	
-	Vector middleLocation = new Vector(0f,-0.15f);
-	Vector feetRLocation;
-	
-	protected boolean getHit()
-	{
-		return hit;
-	}
-	protected void setHit(boolean hit)
-	{
-		this.hit=hit;
-	}
-	EntityBuilder entityBuilder;
-	PartBuilder partBuilder;
-	private Wheel wheelR;
-	private Wheel wheelL;
-	static Polygon polygon=new Polygon(
+    private float timer=0;
+    private int i=0;
+	private boolean rocket, hit, lookRight=true, handUp=false, floatB;
+	private Vector headAbsolutePosition;
+	private ContactListener listener;
+	private PartBuilder partBuilder;
+	private Wheel wheelR, wheelL;
+	private Polygon polygon=new Polygon(
 	    		0.0f, 0.5f,
 	    		0.5f, 1.0f,
 	    		0.0f, 2.0f,
 	    		-0.5f, 1.0f);
-	
+	private Polyline arm, feetG, feetD, jointRight, jointLeft, saddle;
+	private Circle head;
 	private final float MAX_WHEEL_SPEED = 20.0f;
-	private boolean lookRight=true;
- boolean handUp=false;
+	
+	
+	
+	public Vector getHeadAbsolutePosition()
+	{
+		return headAbsolutePosition;
+	}
+	//called by the games to check if the game is over
+	protected boolean hasFallen()
+	{
+		return hit;
+	}
+	
+	
+	
+	private Vector getHeadLocation () {
+		return new Vector (0.0f,1.9f);
+	}
+	
+	private Vector getShoulderLocation(){
+		return new Vector(-.1f, 1.6f);
+	}
+	
+	private Vector getSaddleLocation(){
+		if(lookRight)
+			
+			return new Vector(-0.4f,1f);
+		else
+			return new Vector(0.4f,1f);
+		
+	}
+	
+	private Vector getJointLeftLocation()
+	
+	{//if the player is pushing the brakes the biker is not pedalling, 
+		//it's joint location is constant in the moving coordinate system
+		if(getOwner().getKeyboard().get(KeyEvent.VK_DOWN).isDown()){
+			
+			if (lookRight)
+				return new Vector(-0.1f,0.7f);
+			else
+				return new Vector(0.1f,0.7f);
+			
+		}
+		else {
+			//the biker is pedalling using the fact that his joint is drawing a circle around the joint location
+			//as an origin and a radius 0.2, using the equation x=a+r*cos(angle of the motor wheel) y=b+r*sin(angle of motor wheel
+		if(lookRight)
+			return  new Vector((float) ((0.1+0.2*(Math.cos(Math.PI-wheelL.getEntity().getAngularPosition())))),
+					(float) ( (0.7+0.2*(Math.sin(-(wheelL.getEntity().getAngularPosition()))))));
+			
+	else
+			
+		return  new Vector((float) ((0.1+0.2*(Math.cos( Math.PI-wheelR.getEntity().getAngularPosition())))),
+				(float) ( (0.7+0.2*(Math.sin(-(wheelR.getEntity().getAngularPosition()))))));	
+		}	
+	}
+	
+	private Vector getJointRightLocation(){
+		if(getOwner().getKeyboard().get(KeyEvent.VK_DOWN).isDown()){
+			if (lookRight)
+				return new Vector(0.3f,0.7f);
+			else
+				return new Vector(-0.3f,0.7f);
+			
+		}
+		else{
+		if(lookRight){	
+			//using the opposite values for the sin and cos than the ones for the other joint
+			//to achieve the proper visual effect, one joint starts from down, the other from up
+			
+			return  new Vector((float) ((0.1+0.2*(Math.cos( wheelL.getEntity().getAngularPosition())))),
+			(float) ( (0.7+0.2*(Math.sin((wheelL.getEntity().getAngularPosition()))))));
+		}
+			
+		else
+		
+			return  new Vector((float) ((0.1+0.2*(Math.cos( wheelR.getEntity().getAngularPosition())))),
+					(float) ( (0.7+0.2*(Math.sin((wheelR.getEntity().getAngularPosition()))))));	
+	}
+	
+	}
+	//the location of the foot is following the movement of the joint with a certain translation
+	private Vector getFeetDLocation(){
+	
+	
+		if(lookRight)
+		return getJointRightLocation().add(new Vector(-0.1f,-0.4f));
+				
+			else 
+				return getJointRightLocation().add(new Vector(0.1f,-0.4f));	
+	}
+	
+
+	private Vector getFeetGLocation(){
+		if(lookRight)
+			return getJointLeftLocation().add(new Vector(-0.1f,-0.4f));
+		else 
+			return getJointLeftLocation().add(new Vector(0.1f,-0.4f));	
+	}
+	
+	public Vector getHandLocation(){	
+		
+		if(!handUp) {
+			if(lookRight)
+		
+				return new Vector(0.5f,1.1f);
+			
+			else
+				return new Vector(-0.5f, 1.1f);
+		}
+		//if she has won the hand goes up, by increasing the y coordinate
+		else{
+			if(lookRight)
+				return new Vector(0.5f,2.1f);
+			else
+				return new Vector(-0.5f,2.1f);
+		}		
+	}
+	
+	
+		//constructor
 	public Bike(ActorGame game, boolean fixed, Vector position,Shape shape) {
 		super(game,fixed,position);
+		if(shape==null)throw new NullPointerException("Argument shape given to Bike is null");
+		//initialising the timer
+		timer=0.5f;
+		//creating the physical entity of the hitbox
 		partBuilder=getEntity().createPartBuilder();
 		partBuilder.setShape(shape);
 		partBuilder.setGhost(true);
 	    partBuilder.build();
-		ContactListener listener = new ContactListener () {
+	    i=0;
+	    //adding sensors to the bike
+		 listener = new ContactListener () {
+			
 			@Override
 			public void beginContact(Contact contact) {
 		
 				if (contact.getOther().isGhost ())
-					if(contact.getOther().getCollisionSignature()==0x4)
-						{
-						getEntity().applyAngularForce(50);
-						//getEntity().applyAngularImpulse(-50);
+					{
+					//contact with the rocket
+					if(contact.getOther().getCollisionSignature()==0x4)	{
+						rocket=true;
 						return;
 						}
-					else
+					//contact with the finishLine
+					if(contact.getOther().getCollisionSignature()==0x5){
+					handUp=true;
+					return;
+					}//contact with  gravity field
+					if(contact.getOther().getCollisionSignature()==0x7){
+						floatB=true;
+						return;
+					}
+				}
+					
+			
+			if(contact.getOther().getEntity().equals(wheelR.getEntity())||contact.getOther().getEntity().equals(wheelL.getEntity()))
+			// if contact with wheels
 			return ;
-			if(contact.getOther().getCollisionSignature()==0x1)
-			// si contact avec les roues :
-			return ;
-			else
-			{
-				hit = true ;
-				((GameLevel)getOwner()).setHasFallen(true);
+			//contact with everything else that is physically present will kill the biker
+		if(!contact.getOther().isGhost()){
+				
+				hit=true;
+				 return;
 			}
-			}
+		}
+			
 			@Override
-			public void endContact(Contact contact) {}
+			public void endContact(Contact contact) {
+				
+				}
 			} ;
 			getEntity().addContactListener(listener);
 			
-		
-		 setWheelL(new Wheel(game, false, getEntity().getPosition().add(-1.0f,0.0f), 0.5f));
-		 setWheelR(new Wheel(game, false, getEntity().getPosition().add(1.0f,0.0f), 0.5f));
-		 getWheelL().attach(getEntity(), new Vector (-1.0f, 0.0f), new
-				 Vector (-0.5f, -1.0f));
-		 getWheelR().attach(getEntity() ,new Vector (1.0f, 0.0f), new
-					Vector (0.5f, -1.0f));
+		//creating the wheels
+		 setWheelL(new Wheel(getOwner(), false, getEntity().getPosition().add(-1.0f,0.0f), 0.5f));
+		 setWheelR(new Wheel(getOwner(), false, getEntity().getPosition().add(1.0f,0.0f), 0.5f));
+		 //attaching the wheels to the hitbox
+		 getWheelL().attach(getEntity(), new Vector (-1.0f, 0.0f), new Vector (-0.5f, -1.0f));
+		 getWheelR().attach(getEntity() ,new Vector (1.0f, 0.0f), new Vector (0.5f, -1.0f));
 	
 	}
 
@@ -345,29 +241,25 @@ public class Bike extends GameEntity implements Actor {
 
 	@Override
 	public void draw(Canvas canvas) {
-		Circle head = new Circle (0.2f, getHeadLocation ()) ;
-		//System.out.println("position of right joit"+ getJointRightLocation() + "  and length  "+ getJointRightLocation().getLength());
-		Polyline arm = new Polyline(
-				getShoulderLocation () ,
-				getHandLocation()) ;
-		Polyline saddle = new Polyline(getHeadLocation (),
-				getSaddleLocation());
-		Polyline jointRight = new Polyline(getSaddleLocation(),getJointRightLocation());
-		Polyline feetD= new Polyline(getJointRightLocation(),getFeetDLocation());
-		Polyline feetG = new Polyline(getJointLeftLocation(), getFeetGLocation());
-		Polyline jointLeft = new Polyline(getSaddleLocation(),getJointLeftLocation());
-		canvas.drawShape(arm , this.getTransform (), Color.YELLOW , Color.GREEN ,
+		head = new Circle (0.2f, getHeadLocation ()) ;
+		arm = new Polyline(getShoulderLocation (),getHandLocation()) ;
+		saddle = new Polyline(getHeadLocation (),getSaddleLocation());
+		jointRight = new Polyline(getSaddleLocation(),getJointRightLocation());
+		feetD= new Polyline(getJointRightLocation(),getFeetDLocation());
+		feetG = new Polyline(getJointLeftLocation(), getFeetGLocation());
+		jointLeft = new Polyline(getSaddleLocation(),getJointLeftLocation());
+		canvas.drawShape(arm , this.getTransform (), Color.PINK , Color.PINK ,
 				0.1f, 1f, 1.f) ;
-		canvas.drawShape(head , this.getTransform (), Color.GREEN , Color.GREEN ,0.1f, 1f, 1.f);
-		canvas.drawShape(saddle , this.getTransform (), Color.YELLOW , Color.GREEN ,
+		canvas.drawShape(head , this.getTransform (), Color.PINK , Color.PINK ,0.1f, 1f, 1.f);
+		canvas.drawShape(saddle , this.getTransform (), Color.PINK , Color.PINK ,
 				0.1f, 1f, 1.f) ;
-		canvas.drawShape(jointRight , this.getTransform (), Color.YELLOW , Color.GREEN ,
+		canvas.drawShape(jointRight , this.getTransform (), Color.PINK , Color.PINK ,
 				0.1f, 1f, 1.f) ;
-		canvas.drawShape(jointLeft , this.getTransform (), Color.YELLOW , Color.GREEN ,
+		canvas.drawShape(jointLeft , this.getTransform (), Color.PINK , Color.PINK ,
 			0.1f, 1f, 1.f) ;
-		canvas.drawShape(feetD , this.getTransform (), Color.YELLOW , Color.GREEN ,
+		canvas.drawShape(feetD , this.getTransform (), Color.PINK , Color.PINK ,
 			0.1f, 1f, 1.f) ;
-		canvas.drawShape(feetG , this.getTransform (), Color.YELLOW , Color.GREEN ,
+		canvas.drawShape(feetG , this.getTransform (), Color.PINK , Color.PINK ,
 			0.1f, 1f, 1.f) ;
 		
 		
@@ -375,6 +267,7 @@ public class Bike extends GameEntity implements Actor {
 	   0.1f, 0.1f, 0.5f);
 		
 	}
+	
 	@Override
 	public void destroy() {
 		super.destroy();
@@ -382,115 +275,14 @@ public class Bike extends GameEntity implements Actor {
 	    
 	    getWheelL().destroy();
 	    getWheelR().destroy();
-	    
+	   
 	 }
-	//just destroy the hitbox, the entity
+	//just destroy the hitbox, the entity, to detach the wheels, for a visual effect
 	public void destroyTheBike()
 	{
 		super.destroy();
 	}
 	
-		
-		// TODO Auto-generated method stub
-		private Vector getHeadLocation () {
-			return new Vector (0.0f,1.9f) ;
-		}
-		private Vector getShoulderLocation()
-		{
-			return new Vector(-.1f, 1.6f);
-			
-		}
-		private Vector getSaddleLocation(){
-			if(lookRight)
-				
-				return new Vector(-0.4f,1f);
-			else
-				return new Vector(0.4f,1f);
-			
-		}
-		
-		private Vector getJointLeftLocation()
-		{
-			if(lookRight)
-				return  new Vector((float) ((0.1+0.2*(Math.cos(Math.PI-wheelL.getEntity().getAngularPosition())))),
-						(float) ( (0.7+0.2*(Math.sin(-(wheelL.getEntity().getAngularPosition()))))));
-				//return new Vector((float) ((-0.4+(float)0.61*(Math.cos( Math.abs(wheelL.getEntity().getAngularPosition())%(Math.PI/4))))),
-					//(float) ((float) (1+0.61*(Math.sin(- Math.abs(wheelL.getEntity().getAngularPosition())%(Math.PI/4))))));
-				//return new Vector(0.2f,0.8f);
-				//return (getJointRightLocation().mirrored(new Vector(0,1))).add(new Vector(0,1));
-		else
-				//return new Vector((float) (-(-0.4+(float)0.61*(Math.cos( -Math.abs(wheelR.getEntity().getAngularPosition())%(Math.PI/4))))),
-					//	(float) ((float) (1+0.61*(Math.sin(- Math.abs(wheelR.getEntity().getAngularPosition())%(Math.PI/4))))));
-			return  new Vector((float) ((0.1+0.2*(Math.cos( Math.PI-wheelR.getEntity().getAngularPosition())))),
-					(float) ( (0.7+0.2*(Math.sin(-(wheelR.getEntity().getAngularPosition()))))));	
-		}
-		//////
-		
-		
-		//*****
-		private Vector getJointRightLocation(){
-			if(lookRight)
-				
-			{	
-				
-	return  new Vector((float) ((0.1+0.2*(Math.cos( wheelL.getEntity().getAngularPosition())))),
-				(float) ( (0.7+0.2*(Math.sin((wheelL.getEntity().getAngularPosition()))))));
-			}
-				//return (new Vector())
-			else
-			
-				return  new Vector((float) ((0.1+0.2*(Math.cos( wheelR.getEntity().getAngularPosition())))),
-						(float) ( (0.7+0.2*(Math.sin((wheelR.getEntity().getAngularPosition()))))));	
-		}
-		
-		
-		private Vector getFeetDLocation()
-		{
-				if(lookRight)
-			return getJointRightLocation().add(new Vector(-0.1f,-0.4f));
-					//return getJointRightLocation().x+
-				else 
-					return getJointRightLocation().add(new Vector(0.1f,-0.4f));	
-		}
-		
-		
-		
-		private Vector getFeetGLocation(){
-			if(lookRight)
-				return getJointLeftLocation().add(new Vector(-0.1f,-0.4f));
-			else 
-				return getJointLeftLocation().add(new Vector(0.1f,-0.4f));	
-		}
-		
-	
-	
-		public void setHandLocation(Vector handLocation)
-		{
-				
-			this.handLocation=handLocation;
-		}
-		public Vector getHandLocation()
-		
-		{	if(!handUp) {
-			if(lookRight)
-			
-		return new Vector(0.5f,1.1f);
-				
-			
-					else
-			return new Vector(-0.5f, 1.1f);
-			}
-			else
-			{
-				if(lookRight)
-				return new Vector(0.5f,2.1f);
-				else
-					return new Vector(-0.5f,2.1f);
-			}
-				
-		}
-			
-		
 	
 		public void setPosition(Vector position)
 		{
@@ -498,58 +290,79 @@ public class Bike extends GameEntity implements Actor {
 			
 		}  
 		
-		/*private void pedal(){
-		  	this.setFeetDLocation(middleLocation);
-			this.setFeetGLocation(middleLocation);
-			
-			
 		
-			
-		}
-		private void pedal1(){
-			
-			this.setFeetDLocation(this.feetG);
-			this.setFeetGLocation(this.feetD);
-		}
-		
-	*/
 
 	public  void update(float deltaTime) { 
 		
-		
 		getWheelL().relax();
 		getWheelR().relax();
+		headAbsolutePosition = this.getTransform ().onPoint(getHeadLocation ()) ;
+				if(rocket){
+		//applying impulse to make it move further if collision with the rocket
+					getEntity().applyImpulse(new Vector(7,15), null);
+					rocket=false;
+				}
+		//getting the notification from the wheels that they have hit the trampoline
+		if(wheelR.getJump()||wheelL.getJump()){
+			
+			//to make a cleaner jump
+			getEntity().setAngularPosition(0);
+			getEntity().setAngularVelocity(0);
+			getEntity().setVelocity(new Vector(0,0));
+			//apply the impulse only in the y direction
+	    	getEntity().applyImpulse(new Vector(0f,20f),null);
+			wheelR.setJump(false);
+			wheelL.setJump(false);
+			return;
 		
-		
-		
-		
-		if(hit)
-			{
+		}
+		if(floatB){
+		//getEntity().applyForce(new Vector(0,0), null);	
+		getEntity().cancelGravity();
+		wheelR.getEntity().cancelGravity();
+		wheelL.getEntity().cancelGravity();
+		}
+		//knowing that the gravity field starts at x=96 and ends x=110 
+		//if the bike is outside it, it doesn't float anymore
+		if(this.getPosition().x>110||this.getPosition().x<96) {
+			getEntity().restoreGravity();
+			wheelR.getEntity().restoreGravity();
+			wheelL.getEntity().restoreGravity();
+			floatB=false;
+		}
+		//if it has fallen or is hit by smth
+		if(hit){
 			
 			destroyTheBike();
-			
+			timer=timer-deltaTime;
+			//do the actual destroying and removing from the actors list after the timer has counted, just for visual effect
+			if(timer<0){
+			destroy();
+			getOwner().removeActor(this);
+			getOwner().removeActor(getWheelL());
+			getOwner().removeActor(getWheelR());
 			}
 		
+		}
+		//changing the direction of the bike
 		if (getOwner().getKeyboard().get(KeyEvent.VK_SPACE).isPressed()) { 
-			if(lookRight)
-			{
-				lookRight=false;
+			if(lookRight){
 				
+				lookRight=false;
 			}
 			else
 				lookRight=true;
 		}
 		
-		
-		//wheelL.power(0);
-		//wheelR.power(0);
 
-		if(getOwner().getKeyboard().get(KeyEvent.VK_DOWN).isDown())
-		{
-			getWheelL().power(0);
+		//stopping the bike
+		if(getOwner().getKeyboard().get(KeyEvent.VK_DOWN).isDown()){
 			
+			getWheelL().power(0);
 			getWheelR().power(0);
+			
 		}
+		//speeding the bike up
 		if(getOwner().getKeyboard().get(KeyEvent.VK_UP).isDown())
 		{
 			
@@ -557,8 +370,7 @@ public class Bike extends GameEntity implements Actor {
 			{
 				if(getWheelL().getSpeed()>-MAX_WHEEL_SPEED)
 				{
-					//System.out.println("wheel left an angular position "+(wheelL.getEntity().getAngularPosition()%(2*Math.PI))*(180/Math.PI));
-					//System.out.println("wheel right an angular position "+wheelR.getEntity().getAngularPosition());
+					
 				getWheelL().power(-MAX_WHEEL_SPEED);
 				}
 			}
@@ -566,38 +378,36 @@ public class Bike extends GameEntity implements Actor {
 				if(getWheelR().getSpeed()<MAX_WHEEL_SPEED)
 					
 				{
-					//System.out.println("wheel right an angular position "+wheelR.getEntity().getAngularPosition());
+					
 				getWheelR().power(MAX_WHEEL_SPEED);
 				}
 			
 	
 		}
-		if(getOwner().getKeyboard().get(KeyEvent.VK_LEFT).isDown())
-		{
-			getEntity().applyAngularForce (10.0f) ;
+		if(getOwner().getKeyboard().get(KeyEvent.VK_LEFT).isDown()){
+			getEntity().applyAngularForce(10.0f) ;
 		}
-		if(getOwner().getKeyboard().get(KeyEvent.VK_RIGHT).isDown())
-		{
-			getEntity().applyAngularForce (-10.0f) ;
+		if(getOwner().getKeyboard().get(KeyEvent.VK_RIGHT).isDown()){
+			getEntity().applyAngularForce(-10.0f) ;
 		}
-		if(handUp)
-		{
+		if(handUp){
 			getWheelL().power(0);
-			
 			getWheelR().power(0);
 		}
-		// By default, actors have nothing to update 
+		
 	}
+	//to give access to the games to add the wheels
 	public Wheel getWheelL() {
 		return wheelL;
 	}
-	public void setWheelL(Wheel wheelL) {
+	
+	private void setWheelL(Wheel wheelL) {
 		this.wheelL = wheelL;
 	}
 	public Wheel getWheelR() {
 		return wheelR;
 	}
-	public void setWheelR(Wheel wheelR) {
+	private void setWheelR(Wheel wheelR) {
 		this.wheelR = wheelR;
 	} 
 }
